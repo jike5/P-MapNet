@@ -6,6 +6,12 @@ from torchvision.models.resnet import resnet18,resnet50
 from mmdet.models import HEADS
 from mmdet.models import build_loss
 
+def onehot_encoding(logits, dim=1):
+    max_idx = torch.argmax(logits, dim, keepdim=True)
+    one_hot = logits.new_full(logits.shape, 0)
+    one_hot.scatter_(dim, max_idx, 1)
+    return one_hot
+
 class Up(nn.Module):
     def __init__(self, in_channels, out_channels, scale_factor=2):
         super().__init__()
@@ -121,7 +127,7 @@ class MapSegmentHead(nn.Module):
         loss_dict = self.loss(gts, outputs)
         return outputs, loss_dict
     
-    def forward_test(self, bev_features, img_metas, gts):
+    def forward_test(self, bev_features, img_metas):
         outputs = []
         pred_dict={}
         # forward
@@ -167,6 +173,27 @@ class MapSegmentHead(nn.Module):
             loss_dict['dir_loss'] = dir_loss
         return loss_dict
         
+    def post_process(self, 
+                     preds_dict, 
+                     tokens,
+                     return_vectoried=False, 
+                     thr=0.0,):
+        pred_seg = preds_dict['semantic']
+        semantic_mask = onehot_encoding(pred_seg)
+        # pred_ins = preds_dict['instance']
+        # pred_dir = preds_dict['direction']
+        bs = len(pred_seg)
+        results = []
+        for i in range(bs):
+            single_mask = semantic_mask[i, 1:]
+            single_result = {
+                'semantic_mask': single_mask.detach().cpu(),
+                'token': tokens[i]
+            }
+            results.append(single_result)
+        
+        return results
+    
     def forward(self, *args, return_loss=True, **kwargs):
         if return_loss:
             return self.forward_train(*args, **kwargs)

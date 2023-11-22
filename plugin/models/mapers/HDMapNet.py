@@ -112,28 +112,41 @@ class HDMapNet(BaseMapper):
         return loss, log_vars, num_sample
 
     @torch.no_grad()
-    def forward_test(self, img, points=None, img_metas=None, **kwargs):
+    def forward_test(self, 
+                     img, 
+                     vectors=None,
+                     points=None, 
+                     img_metas=None, 
+                     lidar_mask=None,
+                     **kwargs):
         '''
             inference pipeline
         '''
-
-        #  prepare labels and images
-        
         tokens = []
         for img_meta in img_metas:
             tokens.append(img_meta['token'])
-
-        _bev_feats = self.backbone(img, img_metas, points=points)
-        img_shape = [_bev_feats.shape[2:] for i in range(_bev_feats.shape[0])]
-
-        if self.streaming_bev:
-            self.bev_memory.eval()
-            _bev_feats = self.update_bev_feature(_bev_feats, img_metas)
-            
+        #  prepare labels and images
+        points = torch.stack(points)
+        lidar_mask = torch.stack(lidar_mask)
+        gts = dict(
+            semantic = kwargs.get('semantic', None),
+            instance = kwargs.get('instance', None),
+            direction = kwargs.get('direction', None)
+            )
+        bs = img.shape[0]
+        # Backbone
+        _bev_feats = self.backbone(img, 
+                                   img_metas=img_metas, 
+                                   points=points,
+                                   lidar_mask=lidar_mask)
+                
         # Neck
         bev_feats = self.neck(_bev_feats)
 
-        preds_list = self.head(bev_feats, img_metas=img_metas, return_loss=False)
+        preds_list = self.head(
+            bev_features=bev_feats, 
+            img_metas=img_metas, 
+            return_loss=False) # notes: list of dict, every value is (B,N,H,w)?
         
         # take predictions from the last layer
         preds_dict = preds_list[-1]

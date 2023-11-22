@@ -217,14 +217,12 @@ class BaseMapDataset(Dataset):
         '''
 
         output_format = self.meta['output_format']
-        # if output_format == 'raster':
-        #     self.evaluator = RasterEvaluate(self.eval_config)
-        
-        # elif output_format == 'vector':
-        #     self.evaluator = VectorEvaluate(self.eval_config)
-
-        # else:
-        #     raise ValueError("output_format must be either \'raster\' or \'vector\'")
+        if output_format == 'raster':
+            self.evaluator = RasterEvaluate(self.eval_config)
+        elif output_format == 'vector':
+            self.evaluator = VectorEvaluate(self.eval_config)
+        else:
+            raise ValueError("output_format must be either \'raster\' or \'vector\'")
         
         print('len of the results', len(results))
         
@@ -233,7 +231,7 @@ class BaseMapDataset(Dataset):
         return self._evaluate(result_path, logger=logger)
     
     def _evaluate(self, result_path, logger=None):
-        self.evaluator = VectorEvaluate(self.eval_config)
+        # self.evaluator = VectorEvaluate(self.eval_config)
         result_dict = self.evaluator.evaluate(result_path, logger=logger)
         return result_dict
 

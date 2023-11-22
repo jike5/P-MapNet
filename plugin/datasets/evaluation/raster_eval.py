@@ -33,7 +33,7 @@ class RasterEvaluate(object):
         gts = {}
         for data in mmcv.track_iter_progress(self.dataloader):
             token = deepcopy(data['img_metas'].data[0][0]['token'])
-            gt = deepcopy(data['semantic_mask'].data[0][0])
+            gt = deepcopy(data['semantic'].data[0][0])
             gts[token] = gt
             del data # avoid dataloader memory crash
         

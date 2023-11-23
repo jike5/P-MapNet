@@ -19,6 +19,12 @@ img_size = (img_h, img_w)
 fv_downsample = 16
 fv_size = (img_h//fv_downsample, img_w // fv_downsample)
 
+num_gpus = 6
+batch_size = 5
+num_iters_per_epoch = 27846 // (num_gpus * batch_size)
+num_epochs = 24
+num_epochs_single_frame = num_epochs // 6
+total_iters = num_epochs * num_iters_per_epoch
 num_queries = 100
 
 # category configs
@@ -52,7 +58,7 @@ meta = dict(
     use_radar=False,
     use_map=False,
     use_external=False,
-    output_format='vector')
+    output_format='raster')
 
 # model configs
 img_dims = 64
@@ -173,7 +179,19 @@ test_pipeline = [
         normalize=False,
         permute=permute,
         ),
+    dict(
+        type='HDMapNetRasterizeMap',
+        roi_size=roi_size, 
+        canvas_size=(bev_w, bev_h), 
+        thickness=5, 
+        coords_dim=2,
+        angle_class=36,
+    ),
     dict(type='LoadMultiViewImagesFromFiles', to_float32=True),
+    dict(type='NuscLoadPointsFromFile',
+         nsweeps=3,
+         min_distance=2.2,
+         coord_type='LIDAR'),
     dict(type='ResizeMultiViewImages',
          size=img_size, # H, W
          change_intrinsics=False,
@@ -181,7 +199,10 @@ test_pipeline = [
     dict(type='Normalize3D', **img_norm_cfg),
     dict(type='PadMultiViewImages', size_divisor=32),
     dict(type='FormatBundleMap'),
-    dict(type='Collect3D', keys=['img'], meta_keys=(
+    dict(type='Collect3D', 
+         keys=['img', 'vectors', 'points', 'lidar_mask',
+               'semantic'], 
+         meta_keys=(
         'token', 'ego2img', 'sample_idx', 'ego2global_translation',
         'ego2global_rotation', 'img_shape', 'scene_name', 'cam_intrinsics', 'cam_extrinsics'))
 ]
@@ -193,48 +214,45 @@ eval_config = dict(
     data_root='./dataset/nuscenes',
     ann_file='./dataset/nuscenes_map_infos_val.pkl',
     meta=meta,
+    nsweeps=0, # for test
     roi_size=roi_size,
     cat2id=cat2id,
-    pipeline=[
-        dict(
-            type='VectorizeMap',
-            coords_dim=coords_dim,
-            simplify=True,
-            normalize=False,
-            roi_size=roi_size
-        ),
-        dict(type='FormatBundleMap'),
-        dict(type='Collect3D', keys=['vectors'], meta_keys=['token'])
-    ],
-    interval=1,
+    pipeline=test_pipeline,
+    interval=100,
 )
 
 # dataset configs
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
+    samples_per_gpu=batch_size,
+    workers_per_gpu=4,
     train=dict(
         type='NuscDataset',
         data_root='./dataset/nuscenes',
         ann_file='./dataset/nuscenes_map_infos_train.pkl',
-        nsweeps=3,
+        nsweeps=0,
+        # nsweeps=3,
         meta=meta,
         roi_size=roi_size,
         cat2id=cat2id,
         pipeline=train_pipeline,
         seq_split_num=-1,
+        interval=100,
     ),
     val=dict(
         type='NuscDataset',
         data_root='./dataset/nuscenes',
         ann_file='./dataset/nuscenes_map_infos_val.pkl',
+        map_ann_file='./dataset/nuscenes_map_anno_gts.pkl',
         meta=meta,
+        nsweeps=0, # for test
         roi_size=roi_size,
         cat2id=cat2id,
         pipeline=test_pipeline,
         eval_config=eval_config,
         test_mode=True,
         seq_split_num=-1,
+        samples_per_gpu=1,
+        interval=100,
     ),
     test=dict(
         type='NuscDataset',
@@ -248,18 +266,16 @@ data = dict(
         test_mode=True,
         seq_split_num=-1,
     ),
-    # shuffler_sampler=dict(
-    #     type='DistributedGroupSampler',
-    # ),
-    # nonshuffler_sampler=dict(type='DistributedSampler')
-    shuffler_sampler=None,
-    nonshuffler_sampler=None
+    shuffler_sampler=dict(type='DistributedGroupSampler',),
+    nonshuffler_sampler=dict(type='DistributedSampler')
+    # shuffler_sampler=None,
+    # nonshuffler_sampler=None
 )
 
 # optimizer
 optimizer = dict(
     type='AdamW',
-    lr=5e-4,
+    lr=5e-4 * (batch_size / 4),
     paramwise_cfg=dict(
         custom_keys={
             'img_backbone': dict(lr_mult=0.1),
@@ -275,11 +291,13 @@ lr_config = dict(
     warmup_ratio=1.0 / 3,
     min_lr_ratio=3e-3)
 
-evaluation = dict(interval=2)
+evaluation = dict(interval=num_epochs_single_frame*num_iters_per_epoch)
 find_unused_parameters = True #### when use checkpoint, find_unused_parameters must be False
-checkpoint_config = dict(interval=2)
+# checkpoint_config = dict(interval=1)
+checkpoint_config = dict(interval=num_epochs_single_frame*num_iters_per_epoch)
 
-runner = dict(type='EpochBasedRunner', max_epochs=30)
+runner = dict(
+    type='IterBasedRunner', max_iters=num_epochs * num_iters_per_epoch)
 
 log_config = dict(
     interval=100,

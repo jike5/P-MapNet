@@ -8,6 +8,7 @@ from typing import Dict, Optional
 from logging import Logger
 from mmcv import Config
 from copy import deepcopy
+import os
 
 N_WORKERS = 16
 
@@ -19,25 +20,50 @@ class RasterEvaluate(object):
         n_workers (int): num workers to parallel
     """
 
-    def __init__(self, dataset_cfg: Config, n_workers: int=N_WORKERS):
-        self.dataset = build_dataset(dataset_cfg)
-        self.dataloader = build_dataloader(
-            self.dataset, samples_per_gpu=1, workers_per_gpu=n_workers, shuffle=False, dist=False)
-        self.cat2id = self.dataset.cat2id
+    def __init__(self, 
+                 dataset_cfg: Config, 
+                 n_workers: int=N_WORKERS,
+                 map_ann_file: str=None):
+        assert map_ann_file is not None
+        self.map_ann_file = map_ann_file
+        self.dataset_cfg = dataset_cfg
+        self.n_workers = n_workers
+        self.cat2id = self.dataset_cfg.cat2id
         self.id2cat = {v: k for k, v in self.cat2id.items()}
         self.n_workers = n_workers
+        self._format_gt()
 
-    @cached_property
-    def gts(self) -> Dict[str, NDArray]:
+    def _format_gt(self):
+        assert self.map_ann_file is not None
         print('collecting gts...')
-        gts = {}
-        for data in mmcv.track_iter_progress(self.dataloader):
-            token = deepcopy(data['img_metas'].data[0][0]['token'])
-            gt = deepcopy(data['semantic'].data[0][0])
-            gts[token] = gt
-            del data # avoid dataloader memory crash
+        if (not os.path.exists(self.map_ann_file)):
+            self.dataset = build_dataset(self.dataset_cfg)
+            self.dataloader = build_dataloader(
+                self.dataset, samples_per_gpu=1, 
+                workers_per_gpu=self.n_workers, shuffle=False, dist=False)
+            gts = {}
+            for data in mmcv.track_iter_progress(self.dataloader):
+                token = deepcopy(data['img_metas'].data[0][0]['token'])
+                gt = deepcopy(data['semantic'].data[0][0])
+                gts[token] = gt[1:] # TODO: check this
+                del data # avoid dataloader memory crash
+            self.gts = gts
+            mmcv.dump(gts, self.map_ann_file)
+        else:
+            print(f'{self.map_ann_file} exist, not update')
+            self.gts = mmcv.load(self.map_ann_file)
+
+    # @cached_property
+    # def gts(self) -> Dict[str, NDArray]:
+    #     print('collecting gts...')
+    #     gts = {}
+    #     for data in mmcv.track_iter_progress(self.dataloader):
+    #         token = deepcopy(data['img_metas'].data[0][0]['token'])
+    #         gt = deepcopy(data['semantic'].data[0][0])
+    #         gts[token] = gt
+    #         del data # avoid dataloader memory crash
         
-        return gts
+    #     return gts
 
     def evaluate(self, 
                  result_path: str, 

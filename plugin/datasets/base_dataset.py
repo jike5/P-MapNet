@@ -38,6 +38,7 @@ class BaseMapDataset(Dataset):
                  work_dir=None,
                  eval_config=None,
                  test_mode=False,
+                 map_ann_file=None,
         ):
         super().__init__()
         self.ann_file = ann_file
@@ -69,7 +70,7 @@ class BaseMapDataset(Dataset):
         self.eval_config = eval_config
         if self.eval_config is not None:
             assert test_mode, "eval_config is valid only in test_mode"
-        
+        self.map_ann_file = map_ann_file
         self._set_sequence_group_flag()
 
     def _set_sequence_group_flag(self):
@@ -218,9 +219,9 @@ class BaseMapDataset(Dataset):
 
         output_format = self.meta['output_format']
         if output_format == 'raster':
-            self.evaluator = RasterEvaluate(self.eval_config)
+            self.evaluator = RasterEvaluate(self.eval_config, map_ann_file=self.map_ann_file)
         elif output_format == 'vector':
-            self.evaluator = VectorEvaluate(self.eval_config)
+            self.evaluator = VectorEvaluate(self.eval_config) # TODO: add hard disk cache
         else:
             raise ValueError("output_format must be either \'raster\' or \'vector\'")
         

@@ -15,10 +15,11 @@ class Normalize3D(object):
             default is true.
     """
 
-    def __init__(self, mean, std, to_rgb=True):
+    def __init__(self, mean, std, to_rgb=True, normalize=False):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
         self.to_rgb = to_rgb
+        self.normalize = normalize
 
     def __call__(self, results):
         """Call function to normalize images.
@@ -28,6 +29,9 @@ class Normalize3D(object):
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
+        if self.normalize:
+            for key in results.get('img_fields', ['img']):
+                results[key] = [img / 255. for img in results[key]]
         for key in results.get('img_fields', ['img']):
             results[key] = [mmcv.imnormalize(
                 img, self.mean, self.std, self.to_rgb) for img in results[key]]

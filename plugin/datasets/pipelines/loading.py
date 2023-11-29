@@ -17,7 +17,9 @@ class LoadMultiViewImagesFromFiles(object):
         color_type (str): Color type of the file. Defaults to 'unchanged'.
     """
 
-    def __init__(self, to_float32=False, color_type='unchanged'):
+    def __init__(self, 
+                 to_float32=False, 
+                 color_type='unchanged'):
         self.to_float32 = to_float32
         self.color_type = color_type
 

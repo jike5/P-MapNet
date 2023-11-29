@@ -94,8 +94,8 @@ class HDMapNetBackbone(nn.Module):
             ego2imgs = meta['cam_extrinsics'] # list of 7 cameras, 4x4 array
             ego2global_tran = meta['ego2global_translation'] # 3
             ego2global_rot = np.array(meta['ego2global_rotation']) # 3x3
-            rots.append(torch.stack([img.new_tensor(ego2img[:3, :3]) for ego2img in ego2imgs])) # 7x3x3
-            trans.append(torch.stack([img.new_tensor(ego2img[:3, 3]) for ego2img in ego2imgs])) # 7x3
+            rots.append(torch.stack([img.new_tensor(ego2img[:3, :3].T) for ego2img in ego2imgs])) # 7x3x3
+            trans.append(torch.stack([img.new_tensor((ego2img[:3, :3].T).dot(-ego2img[:3, 3])) for ego2img in ego2imgs])) # 7x3
             post_rots = rots
             post_trans = trans
             intrins.append(torch.stack([img.new_tensor(intri) for intri in meta['cam_intrinsics']]))

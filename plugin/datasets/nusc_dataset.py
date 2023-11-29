@@ -103,8 +103,8 @@ class NuscDataset(BaseMapDataset):
             'img_filenames': [c['img_fpath'] for c in sample['cams'].values()],
             # intrinsics are 3x3 Ks
             'cam_intrinsics': [c['intrinsics'] for c in sample['cams'].values()],
-            # extrinsics are 4x4 tranform matrix, **ego2cam**
-            'cam_extrinsics': [c['extrinsics'] for c in sample['cams'].values()],
+            # extrinsics are 4x4 tranform matrix, **ego2cam**! using it by transpose!!!
+            'cam_extrinsics': [c['extrinsics'] for c in sample['cams'].values()], # extrinsics.T
             'ego2img': ego2img_rts,
             'map_geoms': map_label2geom, # {0: List[ped_crossing(LineString)], 1: ...}
             'ego2global_translation': sample['e2g_translation'], 

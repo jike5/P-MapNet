@@ -53,7 +53,7 @@ simplify = True
 
 # meta info for submission pkl
 meta = dict(
-    use_lidar=True,
+    use_lidar=False,
     use_camera=True,
     use_radar=False,
     use_map=False,

@@ -280,6 +280,12 @@ class BaseMapDataset(Dataset):
             
             self.renderer.render_bev_from_mask(semantic_mask, out_dir)
 
+        if 'semantic' in data:
+            semantic = data['semantic']
+            if isinstance(semantic, DataContainer):
+                semantic = semantic.data
+            self.renderer.render_bev_from_mask(semantic[1:], out_dir, 'semantic.jpg')
+
     def show_result(self, submission, idx, score_thr=0, draw_score=False, out_dir='demo/'):
         '''Visualize prediction result.
 

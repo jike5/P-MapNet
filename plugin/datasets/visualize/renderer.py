@@ -202,7 +202,7 @@ class Renderer(object):
             out_path = osp.join(out_dir, self.cam_names[i]) + '.jpg'
             cv2.imwrite(out_path, img_bgr)
 
-    def render_bev_from_mask(self, semantic_mask, out_dir):
+    def render_bev_from_mask(self, semantic_mask, out_dir, img_name='semantic_map.jpg'):
         '''Render bev segmentation from semantic_mask.
         
         Args:
@@ -226,6 +226,6 @@ class Renderer(object):
             bev_img[:, valid] = np.array(COLOR_MAPS_BGR[cat]).reshape(3, 1)
         
         bev_img_flipud = np.array([np.flipud(i) for i in bev_img], dtype=np.uint8)
-        out_path = osp.join(out_dir, 'semantic_map.jpg')
+        out_path = osp.join(out_dir, img_name)
         cv2.imwrite(out_path, bev_img_flipud.transpose((1, 2, 0)))
         

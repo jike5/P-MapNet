@@ -26,7 +26,7 @@ class NuscDataset(BaseMapDataset):
     
     def __init__(self, 
                  data_root, 
-                 nsweeps=3, 
+                 nsweeps=0, 
                  **kwargs):
         super().__init__(**kwargs)
         self.map_extractor = NuscMapExtractor(data_root, self.roi_size)
@@ -68,8 +68,9 @@ class NuscDataset(BaseMapDataset):
         prev_id = sample['prev']
         for i in range(self.nsweeps):
             if prev_id != -1:
-                adj_info.append(self.samples[prev_id])
-                prev_id = self.samples[prev_id]['prev']
+                if prev_id < len(self.samples): # TODO: check this
+                    adj_info.append(self.samples[prev_id])
+                    prev_id = self.samples[prev_id]['prev']
             else:
                 break
         

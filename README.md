@@ -13,8 +13,12 @@ P-MapNet can be switched into different inference modes that covers different re
 
 ![visualization](figs/teaser.jpg)
 
+### 1. Environment
 Please check [installation](docs/installation.md) for environment installation and nuScenes dataset preparation.
-
+### 2. Training and Evaluation
+Please check [getting_started](docs/getting_started.md) for the model training and evaluation.
+### 3. Visualization
+Please check [visualization](docs/visualization.md) for the HDMap prediction images and video.
 ### TODO
 
 - [ ] Add Argoverse2 dataset model

@@ -1,23 +1,23 @@
 # DATA
 dataset='nuScenes'
-dataroot = './dataset'
+dataroot = './dataset/nuScenes'
 version= 'v1.0-trainval'
 
-xbound = [-30, 30.0, 0.15] # 60m*30m, bev_size:400*200
-ybound = [-15.0, 15.0, 0.15]
+xbound = [-60.0, 60.0, 0.3]
+ybound = [-30.0, 30.0, 0.3]
 
 zbound = [-10.0, 10.0, 20.0]
 dbound = [4.0, 45.0, 1.0]
 image_size = [128, 352]
 thickness = 5
 # EXP
-logdir = './Work_dir/pretrain_60'
+logdir = './Work_dir/sd_cam_60'
 sd_map_path='./data_osm/osm'
 # TRAIN
-model = 'hdmapnet_pretrain'
+model = 'pmapnet_sd_cam'
 nepochs = 30
 batch_size = 8
-nworkers = 10
+nworkers = 20
 gpus = [0, 1, 2, 3]
 
 # OPT
@@ -28,8 +28,13 @@ pos_weight = 2.13
 steplr = 10
 
 # CHECK_POINTS
-modelf = ".Work_dir/pretrain_60/model0.pt"
-vit_base = 'ckpt/mae_finetuned_vit_base.pth' # TODO: add download link in readme
+modelf = "Work_dir/nus/sd_60m_cam/cam_60_sd_model15.pt"
+
+# NETWORK
+use_aux = True
+griding_num = 200
+backbone = '18'
+
 # LOSS
 scale_seg = 1.0
 scale_var = 0.1
@@ -44,8 +49,8 @@ delta_d = 3.0
 angle_class = 36
 
 # Mask config
-mask_flag = True
-mask_ratio = 0.5 # random ratio
+mask_flag = False
+mask_ratio = -1 # random ratio
 patch_h = 20
 patch_w = 20
 

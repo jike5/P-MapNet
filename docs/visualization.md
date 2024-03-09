@@ -1,6 +1,6 @@
 # Visualization
 
-We provide all the visualization scripts under `P-MAPNET/tools/vis_*.py`
+We provide all the visualization scripts under `tools/vis_*.py`
 
 ## Visualize prediction
 

@@ -1,24 +1,24 @@
 # DATA
 dataset='nuScenes'
-dataroot = '/DATA_EDS2/jiangz/Work/P-MapNet/dataset/nuScenes'
+dataroot = './dataset/nuScenes'
 version= 'v1.0-trainval'
 
-xbound = [-60.0, 60.0, 0.3]
-ybound = [-30.0, 30.0, 0.3]
+xbound = [-30, 30.0, 0.15] # 60m*30m, bev_size:400*200
+ybound = [-15.0, 15.0, 0.15]
 
 zbound = [-10.0, 10.0, 20.0]
 dbound = [4.0, 45.0, 1.0]
 image_size = [128, 352]
 thickness = 5
 # EXP
-logdir = './Work_dir/sd_cam_60'
+logdir = './Work_dir/sd_60'
 sd_map_path='./data_osm/osm'
 # TRAIN
-model = 'pmapnet_sd_cam'
+model = 'pmapnet_sd'
 nepochs = 30
-batch_size = 8
+batch_size = 2
 nworkers = 20
-gpus = [0, 1, 2, 3]
+gpus = [0]
 
 # OPT
 lr = 5e-4
@@ -28,12 +28,7 @@ pos_weight = 2.13
 steplr = 10
 
 # CHECK_POINTS
-modelf = "Work_dir/nus/sd_60m_cam/cam_60_sd_model15.pt"
-
-# NETWORK
-use_aux = True
-griding_num = 200
-backbone = '18'
+modelf = "./Work_dir/sd_60m/model11--.pt"
 
 # LOSS
 scale_seg = 1.0
@@ -54,6 +49,9 @@ mask_ratio = -1 # random ratio
 patch_h = 20
 patch_w = 20
 
-
-
-
+# JSON
+result_path = './Work_dir/sd_60m/submission.json'
+max_channel = 3
+bidirectional = False
+CD_threshold = 5
+threshold_iou = 0.1

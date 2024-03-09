@@ -64,7 +64,7 @@ def export_to_json(model, val_loader, angle_class, args):
                             vectors.append(vector)
                         rec = val_loader.dataset.samples[batchi * val_loader.batch_size + si]
                         submission['results'][rec['token']] = vectors
-    mmcv.dump(submission, args.output)
+    mmcv.dump(submission, args.result_path)
 
 
 def main(args):

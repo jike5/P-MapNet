@@ -15,7 +15,7 @@ vis_path = './vis_map'
 sd_map_path='./data_osm/osm'
 
 # CHECK_POINTS
-modelf = '/DATA_EDS2/zhuzx/Work/P-MapNet-ckpt/fusion_120_sd_model23.pt'
+modelf = 'ckpt/fusion_120_sd_model23.pt'
 
 # Model
 model = 'pmapnet_sd'

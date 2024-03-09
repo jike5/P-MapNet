@@ -1,0 +1,38 @@
+name: pmapnet
+channels:
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=main
+  - _openmp_mutex=5.1=1_gnu
+  - asttokens=2.0.5=pyhd3eb1b0_0
+  - backcall=0.2.0=pyhd3eb1b0_0
+  - ca-certificates=2023.08.22=h06a4308_0
+  - decorator=5.1.1=pyhd3eb1b0_0
+  - executing=0.8.3=pyhd3eb1b0_0
+  - ld_impl_linux-64=2.38=h1181459_1
+  - libffi=3.4.4=h6a678d5_0
+  - libgcc-ng=11.2.0=h1234567_1
+  - libgomp=11.2.0=h1234567_1
+  - libstdcxx-ng=11.2.0=h1234567_1
+  - matplotlib-inline=0.1.6=py38h06a4308_0
+  - ncurses=6.4=h6a678d5_0
+  - openssl=3.0.11=h7f8727e_2
+  - parso=0.8.3=pyhd3eb1b0_0
+  - pexpect=4.8.0=pyhd3eb1b0_3
+  - pickleshare=0.7.5=pyhd3eb1b0_1003
+  - pip=23.2.1=py38h06a4308_0
+  - ptyprocess=0.7.0=pyhd3eb1b0_2
+  - pure_eval=0.2.2=pyhd3eb1b0_0
+  - pygments=2.15.1=py38h06a4308_1
+  - python=3.8.18=h955ad1f_0
+  - readline=8.2=h5eee18b_0
+  - setuptools=68.0.0=py38h06a4308_0
+  - six=1.16.0=pyhd3eb1b0_1
+  - sqlite=3.41.2=h5eee18b_0
+  - stack_data=0.2.0=pyhd3eb1b0_0
+  - tk=8.6.12=h1ccaba5_0
+  - traitlets=5.7.1=py38h06a4308_0
+  - typing_extensions=4.7.1=py38h06a4308_0
+  - wheel=0.41.2=py38h06a4308_0
+  - xz=5.4.2=h5eee18b_0
+  - zlib=1.2.13=h5eee18b_0

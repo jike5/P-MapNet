@@ -66,8 +66,8 @@ def vis(semantic, semantic_gt, sd_map, time, scene_id, save_path, with_gt=False)
     boundary = 'Purples'
     vmax = 1
     for i in range(semantic.shape[0]):
-        # if scene_id[i] not in SCENE_CANDIDATE:
-        #     continue
+        if scene_id[i] not in SCENE_CANDIDATE:
+            continue
         save_path_seg = os.path.join(save_path, f'{scene_id[i]}', f'{time[i]}')
         if not os.path.exists(save_path_seg):
             os.makedirs(save_path_seg)

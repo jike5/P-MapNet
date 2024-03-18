@@ -1,7 +1,7 @@
 <div align="center">
 <h1>P-MapNet: Far-seeing Map Generator Enhanced by both SDMap and HDMap Priors </h1>
   
-[[Paper]()]   [[Project Page](https://jike5.github.io/P-MapNet-project-page/)]
+[[Paper](https://arxiv.org/pdf/2403.10521.pdf)]   [[Project Page](https://jike5.github.io/P-MapNet/)]
 
 </div >
 

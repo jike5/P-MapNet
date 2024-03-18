@@ -40,5 +40,12 @@ We provide results on nuScenes-val set.
 ### Citation
 If you found this paper or codebase useful, please cite our paper:
 ```
-
+@misc{jiang2024pmapnet,
+      title={P-MapNet: Far-seeing Map Generator Enhanced by both SDMap and HDMap Priors}, 
+      author={Zhou Jiang and Zhenxin Zhu and Pengfei Li and Huan-ang Gao and Tianyuan Yuan and Yongliang Shi and Hang Zhao and Hao Zhao},
+      year={2024},
+      eprint={2403.10521},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
 ```

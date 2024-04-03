@@ -223,13 +223,11 @@ def semantic_dataset(cfg, version, dataroot, data_conf, batch_size, nworkers, da
         train_dataset = PMapNetSemanticDataset(version, dataroot, data_conf, is_train=True)
         val_dataset = PMapNetSemanticDataset(version, dataroot, data_conf, is_train=False)
     elif dataset_type == 'av2':
-        # import pdb; pdb.set_trace()
         if 'ann_path' in cfg:
             data_conf.update({"ann_path":cfg.ann_path})
         train_dataset = AV2PMapNetSemanticDataset(dataroot, data_conf, is_train=True)
         val_dataset = AV2PMapNetSemanticDataset(dataroot, data_conf, is_train=False)
-    # import pdb; pdb.set_trace()
-    # val_dataset.__getitem__(0)
+
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=nworkers, drop_last=True, collate_fn=collate_wrapper)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=nworkers, collate_fn=collate_wrapper)
     return train_loader, val_loader

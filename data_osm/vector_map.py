@@ -5,7 +5,10 @@ from shapely import affinity, ops
 from shapely.geometry import LineString, box, MultiPolygon, MultiLineString
 import geopandas as gpd
 import pandas as pd
+from matplotlib.collections import LineCollection
+import matplotlib.pyplot as plt
 from .const import CLASS2LABEL
+from .geo_opensfm import TopocentricConverter
 import os 
 
 class VectorizedLocalMap(object):
@@ -28,11 +31,11 @@ class VectorizedLocalMap(object):
         '''
         super().__init__()
         self.data_root = dataroot
-        self.MAPS = ['boston-seaport', 'singapore-hollandvillage',
+        self.MAPS = ['boston-seaport',     'singapore-hollandvillage',
                      'singapore-onenorth', 'singapore-queenstown']
-        self.line_classes = line_classes # ['road_divider', 'lane_divider'] 车道边界线,车道分隔线
-        self.ped_crossing_classes = ped_crossing_classes # ['ped_crossing'] 人行道
-        self.polygon_classes = contour_classes # ['road_segment', 'lane']   道路段 车道线
+        self.line_classes = line_classes                 # ['road_divider', 'lane_divider']
+        self.ped_crossing_classes = ped_crossing_classes # ['ped_crossing']
+        self.polygon_classes = contour_classes           # ['road_segment', 'lane']  
         self.nusc_maps = {}
         self.map_explorer = {}
         for loc in self.MAPS:
@@ -47,41 +50,37 @@ class VectorizedLocalMap(object):
         self.normalize = normalize
         self.fixed_num = fixed_num
 
-        # 处理osm数据
         self.sd_maps = {}
-        proj = 3857
-        # 筛选道路主干道
-        # ref: https://wiki.openstreetmap.org/wiki/Map_features#Highway
-        options = ['trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'residential', # road
-                'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link'# road link
-                'living_street',  'road',  # Special road  'service'
-                ]
+        options = [
+            'trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'residential', # road
+            'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link'# road link
+            'living_street',  'road',  # Special road  'service'
+        ]
+        map_origin = {
+            'boston-seaport':           (42.336849169438615, -71.05785369873047, 0.),
+            'singapore-onenorth':       (1.2882100868743724, 103.78475189208984, 0.),
+            'singapore-hollandvillage': (1.2993652317780957, 103.78217697143555, 0.),
+            'singapore-queenstown':     (1.2782562240223188, 103.76741409301758, 0.)}
         
-        map_origin_df = pd.DataFrame(
-            {'City': ['boston-seaport', 'singapore-onenorth', 'singapore-hollandvillage', 'singapore-queenstown'],
-            'Latitude': [42.336849169438615, 1.2882100868743724, 1.2993652317780957, 1.2782562240223188],
-            'Longitude': [-71.05785369873047, 103.78475189208984, 103.78217697143555, 103.76741409301758]}) #
-        map_origin_gdf = gpd.GeoDataFrame(
-            map_origin_df, geometry=gpd.points_from_xy(map_origin_df.Longitude, map_origin_df.Latitude), crs=4326)
-        map_origin_gdf = map_origin_gdf.to_crs(proj) 
         for loc in self.MAPS:
+            lat, lon, alt = map_origin[loc]
             sd_map = gpd.read_file(os.path.join(sd_map_path, '{}.shp'.format(loc)))
-            sd_map = sd_map.to_crs(proj)
+            converter = TopocentricConverter(lat, lon, alt)
             sd_map = sd_map[sd_map['type'].isin(options)]
-            sd_map = MultiLineString(list(sd_map.geometry))
-            origin_geo = map_origin_gdf[map_origin_gdf['City']==loc].geometry
-            origin = (float(origin_geo.x), float(origin_geo.y))
-            matrix = [1.0, 0.0, 0.0, 1.0, -origin[0], -origin[1]]
-            self.sd_maps[loc] = affinity.affine_transform(sd_map, matrix)
-            if loc == 'boston-seaport':
-                '''
-                '''
-                scale = 0.7143
-                matrix = [scale, 0.0, 0.0, scale, 0.0, 0.0]
-                self.sd_maps[loc] = affinity.affine_transform(self.sd_maps[loc], matrix)
-                matrix = [1.0351, 0.0014, -0.0002, 1.0326, 0.0, 0.0]
-                self.sd_maps[loc] = affinity.affine_transform(self.sd_maps[loc], matrix)
-                
+            sd_map_topo_list = []
+            for _, row in sd_map.iterrows():
+                tmp_sd_data = list(row.geometry.coords)
+                tmp_sd_data_topo = [converter.to_topocentric(lonlat[1], lonlat[0], 0.)[:2] for lonlat in tmp_sd_data]
+                sd_map_topo_list.append(tmp_sd_data_topo)
+            self.sd_maps[loc] = MultiLineString(sd_map_topo_list)
+            # # vis test
+            # fig, ax = self.nusc_maps[loc].render_layers(self.nusc_maps[loc].non_geometric_layers, figsize=1)
+            # lines = LineCollection([list(line.coords) for line in self.sd_maps[loc]])
+            # ax.add_collection(lines)
+            # ax.axis('equal')
+            # plt.savefig(f'{loc}.png')
+            # plt.close()
+
     def get_osm_geom(self, patch_box, patch_angle, location):
         osm_map = self.sd_maps[location]
         patch_x = patch_box[0]
@@ -102,7 +101,6 @@ class VectorizedLocalMap(object):
     def gen_vectorized_samples(self, location, ego2global_translation, ego2global_rotation):
         map_pose = ego2global_translation[:2]
         rotation = Quaternion(ego2global_rotation)
-        # 取该车附近的patch_box内的车道线(30*60大小的patch)
         patch_box = (map_pose[0], map_pose[1], self.patch_size[0], self.patch_size[1])
         patch_angle = quaternion_yaw(rotation) / np.pi * 180
 

@@ -127,7 +127,7 @@ class PMapNet_SD(nn.Module):
                 )
     def forward(self, img, trans, rots, intrins, post_trans, post_rots, lidar_data, lidar_mask, car_trans, yaw_pitch_roll, osm):
         x = self.get_cam_feats(img)
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         x = self.view_fusion(x)
         Ks, RTs, post_RTs = self.get_Ks_RTs_and_post_RTs(intrins, rots, trans, post_rots, post_trans)
         topdown = self.ipm(x, Ks, RTs, car_trans, yaw_pitch_roll, post_RTs)

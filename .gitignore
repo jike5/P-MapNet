@@ -126,8 +126,6 @@ mmdetection3d
 
 # demo
 demo/
-*.jpg
-*.png
 *.obj
 *.ply
 *.zip
@@ -143,3 +141,5 @@ demo/
 av2
 nuScenes
 dataset
+
+Work_dir

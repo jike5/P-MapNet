@@ -29,7 +29,7 @@ steplr = 10
 
 # CHECK_POINTS
 modelf = ".Work_dir/pretrain_60/model0.pt"
-vit_base = 'ckpt/mae_finetuned_vit_base.pth' # TODO: add download link in readme
+vit_base = 'ckpt/mae_finetuned_vit_base.pth' # download link: https://dl.fbaipublicfiles.com/mae/finetune/mae_finetuned_vit_base.pth
 # LOSS
 scale_seg = 1.0
 scale_var = 0.1

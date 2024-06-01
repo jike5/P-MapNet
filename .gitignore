@@ -110,7 +110,7 @@ data
 .idea
 
 # custom
-*.pkl
+# *.pkl
 *.gif
 *.pkl.json
 *.log.json

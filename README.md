@@ -25,7 +25,7 @@ We provide results on nuScenes-val set.
 |  240 × 60 | HDMapNet | L+C | 40.0   |   26.8   |   42.6   |   36.47 | [ckpt](https://drive.google.com/file/d/1oKjYPXVxu0MwDzrOJ97r-0b2GBnKxK12/view?usp=drive_link) | [cfg](config/nusc/baseline/baseline_240m.py) | 
 |  240 × 60 | P-MapNet(SD+HD Prio.) | L+C | **53.0** | **42.6** | **54.2** | **49.93** | [ckpt](https://drive.google.com/file/d/1lcA9U9oWKYM9X20gblBaG16I2DBLt2yU/view?usp=drive_link) | [cfg](config/nusc/hd_prior/hd_240m.py) | 
 
-> The model weights under other settings can be downloaded at [GoogleDrive](https://drive.google.com/drive/folders/1P6LuhsHy3yy4sGwlDCGT9tjVzYpcaqEb?usp=drive_link) or [百度云](https://pan.baidu.com/s/1OVI3aWgOGGg6_iGCs_gxDg?pwd=65aa).
+> The model weights under **other settings** can be downloaded at [GoogleDrive](https://drive.google.com/drive/folders/1P6LuhsHy3yy4sGwlDCGT9tjVzYpcaqEb?usp=drive_link) or [百度云](https://pan.baidu.com/s/1OVI3aWgOGGg6_iGCs_gxDg?pwd=65aa).
 
 ## Getting Started
 - [Installation](docs/installation.md)

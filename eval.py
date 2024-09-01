@@ -132,7 +132,6 @@ if __name__ == '__main__':
     parser.add_argument('--gpus', type=int, nargs='+', default=[0])#
     
     parser.add_argument('--is_onlybd', action='store_true')
-    parser.add_argument('--is_newsplit', action='store_false')
 
     args = parser.parse_args()
     main(args)

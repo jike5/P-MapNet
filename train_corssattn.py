@@ -90,7 +90,6 @@ def train(args):
         'mask_flag': args.mask_flag,
         'convbd': args.convbd,
         'is_onlybd': args.is_onlybd,
-        'is_newsplit': args.is_newsplit
     }
 
     train_loader, val_loader = semantic_dataset(args.version,args.data_val, args.dataroot, data_conf, args.bsz, args.nworkers)

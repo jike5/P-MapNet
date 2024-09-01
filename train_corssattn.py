@@ -1,6 +1,6 @@
 import os
 
-os.environ['CUDA_VISIBLE_DEVICES']= '3'
+# os.environ['CUDA_VISIBLE_DEVICES']= '3'
 import numpy as np
 import sys
 import logging
@@ -198,9 +198,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='HDMapNet training.')
     # logging config
 
-    parser.add_argument("--logdir", type=str, default='./runs_crosssttn/60*30/new_test')
+    parser.add_argument("--logdir", type=str, default='./output/60*30')
     # nuScenes config
-    parser.add_argument('--dataroot', type=str, default='/home/aidrive/zyp/Surround_scene/nuscenes/') 
+    parser.add_argument('--dataroot', type=str, default='./dataset/nuscenes/') 
 
     parser.add_argument('--version', type=str, default='v1.0-trainval', choices=['v1.0-trainval', 'v1.0-mini'])
     parser.add_argument('--data_val', type=str, default='trainval', choices=['vis', 'trainval'])

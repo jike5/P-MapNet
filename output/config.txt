@@ -1,0 +1,40 @@
+logdir : ./runs_crosssttn/60*30/new_test
+dataroot : /home/aidrive/zyp/Surround_scene/nuscenes/
+version : v1.0-trainval
+data_val : trainval
+model : PMapNet_sdmap
+num_decoder_layers : 2
+convbd : False
+nepochs : 30
+max_grad_norm : 5.0
+pos_weight : 2.13
+bsz : 8
+nworkers : 20
+lr : 0.0005
+steplr : 10
+weight_decay : 1e-07
+finetune : False
+modelf : None
+thickness : 5
+image_size : [128, 352]
+xbound : [-30.0, 30.0, 0.15]
+ybound : [-15.0, 15.0, 0.15]
+zbound : [-10.0, 10.0, 20.0]
+dbound : [4.0, 45.0, 1.0]
+sd_thickness : 5
+gpus : [0]
+patch_w : 2
+patch_h : 2
+mask_ratio : 0.25
+mask_flag : False
+instance_seg : True
+embedding_dim : 16
+delta_v : 0.5
+delta_d : 3.0
+direction_pred : True
+angle_class : 36
+scale_seg : 1.0
+scale_var : 0.1
+scale_dist : 0.1
+scale_direction : 0.1
+is_onlybd : False

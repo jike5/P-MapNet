@@ -1,7 +1,7 @@
 <div align="center">
 <h1>P-MapNet: Far-seeing Map Generator Enhanced by both SDMap and HDMap Priors </h1>
   
-[[Paper](https://arxiv.org/pdf/2403.10521.pdf)]   [[Project Page](https://jike5.github.io/P-MapNet/)]
+[[RAL](https://ieeexplore.ieee.org/document/10643284)]   [[Paper](https://arxiv.org/pdf/2403.10521.pdf)]   [[Project Page](https://jike5.github.io/P-MapNet/)]
 
 </div >
 
@@ -40,12 +40,15 @@ We provide results on nuScenes-val set.
 ### Citation
 If you found this paper or codebase useful, please cite our paper:
 ```
-@misc{jiang2024pmapnet,
-      title={P-MapNet: Far-seeing Map Generator Enhanced by both SDMap and HDMap Priors}, 
-      author={Zhou Jiang and Zhenxin Zhu and Pengfei Li and Huan-ang Gao and Tianyuan Yuan and Yongliang Shi and Hang Zhao and Hao Zhao},
-      year={2024},
-      eprint={2403.10521},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
+@ARTICLE{10643284,
+  author={Jiang, Zhou and Zhu, Zhenxin and Li, Pengfei and Gao, Huan-ang and Yuan, Tianyuan and Shi, Yongliang and Zhao, Hang and Zhao, Hao},
+  journal={IEEE Robotics and Automation Letters}, 
+  title={P-MapNet: Far-Seeing Map Generator Enhanced by Both SDMap and HDMap Priors}, 
+  year={2024},
+  volume={9},
+  number={10},
+  pages={8539-8546},
+  keywords={Feature extraction;Skeleton;Laser radar;Generators;Encoding;Point cloud compression;Autonomous vehicles;Computer vision for transportation;semantic scene understanding;intelligent transportation systems},
+  doi={10.1109/LRA.2024.3447450}}
+
 ```
